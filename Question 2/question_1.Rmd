@@ -1,0 +1,67 @@
+---
+title: "Question 1"
+output: html_document
+date: "2025-04-19"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Quesion 1: (a)
+
+```{r q_1}
+library(tidyverse)
+
+load("house_prices.rda")
+ggplot(house_prices, aes(x = date, y = house_price_index)) +
+  geom_line() +
+  facet_wrap(~ state) +
+  scale_x_date(
+    breaks = as.Date(c("1980-01-01", "2000-01-01", "2020-01-01")),
+    labels = c("'80", "'00", "'20")
+  ) +
+  labs(
+    title = "Trend of House Price Index by State",
+    x = "Year",
+    y = "House Price Index"
+  )
+
+# ggsave("chart_house_price_index.png", width = 12, height = 8)
+
+```
+
+## Quesion 1: (b)
+
+```{r q_2, echo=TRUE}
+house_reshaped <- house_prices %>%
+  gather(
+    key = "measure",
+    value = "value",
+    house_price_index, unemploy_perc
+  )
+
+head(house_reshaped)
+```
+
+## Quesion 1: (c)
+
+```{r q_3, echo=TRUE}
+ggplot(house_reshaped, aes(x = date, y = value, color = measure)) +
+  geom_line(na.rm = TRUE) + # Added na.rm=TRUE
+  facet_wrap(~ state) +
+  scale_x_date(
+    breaks = as.Date(c("1980-01-01", "2000-01-01", "2020-01-01")),
+    labels = c("'80", "'00", "'20")
+  ) +
+  labs(
+    title = "House Price Index vs. Unemployment Percentage by State",
+    x = "Year",
+    y = "Value", # Generic label as units differ
+    color = "Metric" # Legend title
+  ) +
+  theme_minimal()
+
+# ggsave("chart_reshaped_metrics.png", width = 12, height = 8)
+```
+Comments: The reshaped chart provides a better perspective by overlaying both metrics in each state panel. This makes it easier to assess if there's any correlation or inverse trend between house prices and unemployment.
